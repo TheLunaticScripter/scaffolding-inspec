@@ -1,5 +1,5 @@
 # scaffolding-inspec
 
-`scaffolding-inspec` is a Habitat package of best practices for Chef InSpec. Using Chef InSpec in this way is the Effortless pattern for InSpec.
+`scaffolding-inspec` is a Habitat package of best practices for Chef InSpec. Using this scaffolding will automatically keep you updated on the latest best practices for the Effortless pattern.
 
-You can use the Effortless pattern for Chef InSpec by adding `scaffolding-inspec` to your Habitat plan (`plan.sh` or `plan.ps1`). Additionally, you can tune the settings of the InSpec client in your `default.toml`
+You can implement the Effortless pattern for Chef InSpec by adding `scaffolding-inspec` to your Habitat plan (`plan.sh` or `plan.ps1`). Additionally, you can tune the settings of the InSpec client in your `default.toml`
