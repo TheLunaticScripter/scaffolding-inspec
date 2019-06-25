@@ -22,7 +22,7 @@ do_default_before() {
     message="$message Please build from the profile root"
     build_line "$message"
 
-    return 1
+    exit 1
   fi
 
   # Execute an 'inspec compliance login' if a profile needs to be fetched from
@@ -73,9 +73,9 @@ export INSPEC_CONFIG_DIR="{{pkg.svc_var_path}}"
 CFG_SPLAY_FIRST_RUN={{cfg.splay_first_run}}
 CFG_SPLAY_FIRST_RUN="\${CFG_SPLAY_FIRST_RUN:-0}"
 CFG_INTERVAL={{cfg.interval}}
-CFG_INTERVAL="\${CFG_INTERVAL:-300}"
+CFG_INTERVAL="\${CFG_INTERVAL:-1800}"
 CFG_SPLAY={{cfg.splay}}
-CFG_SPLAY="\${CFG_SPLAY:-300}"
+CFG_SPLAY="\${CFG_SPLAY:-1800}"
 CFG_LOG_LEVEL={{cfg.log_level}}
 CFG_LOG_LEVEL="\${CFG_LOG_LEVEL:-warn}"
 CFG_CHEF_LICENSE={{cfg.chef_license.acceptance}}
@@ -85,7 +85,7 @@ PROFILE_PATH="{{pkg.path}}/{{pkg.name}}-{{pkg.version}}.tar.gz"
 
 inspec_cmd()
 {
-  inspec exec \${PROFILE_PATH} --json-config \${CONFIG} --chef-license \$CFG_CHEF_LICENSE --log-level \$CFG_LOG_LEVEL
+  inspec exec \${PROFILE_PATH} --config \${CONFIG} --chef-license \$CFG_CHEF_LICENSE --log-level \$CFG_LOG_LEVEL
 }
 
 
@@ -139,7 +139,7 @@ EOF
       },
       "json": {
         "file": "{{pkg.svc_path}}/logs/inspec_last_run.json"
-      }{{#if cfg.automate.token ~}},
+      }{{#if cfg.automate.enable ~}},
       "automate" : {
         "url": "{{cfg.automate.url}}/data-collector/v0/",
         "token": "{{cfg.automate.token}}",
@@ -147,7 +147,7 @@ EOF
         "verify_ssl": false
       }{{/if ~}}
     }
-    {{#if cfg.automate.token }},
+    {{#if cfg.automate.enable }},
     "compliance": {
      "server" : "{{cfg.automate.url}}",
      "token" : "{{cfg.automate.token}}",
@@ -160,8 +160,11 @@ EOF
   chmod 0640 "$pkg_prefix/config/inspec_exec_config.json"
 
   cat << EOF >> "$pkg_prefix/default.toml"
-interval = 300
-splay = 300
+# You must accept the Chef License to use this software: https://www.chef.io/end-user-license-agreement/
+# Change [chef_license] from acceptance = "undefined" to acceptance = "accept-no-persist" if you agree to the license.
+
+interval = 1800
+splay = 1800
 splay_first_run = 0
 log_level = 'warn'
 report_to_stdout = true
@@ -169,12 +172,11 @@ report_to_stdout = true
 [chef_license]
 acceptance = "undefined"
 
-# Uncomment and replace values to report to Automate.
-# This can also be applied at runtime via `hab config apply`
-# [automate]
-# url = 'https://<automate_url>'
-# token = '<automate_token>'
-# user = '<automate_user>'
+[automate]
+enable = false
+url = 'https://<automate_url>'
+token = '<automate_token>'
+user = '<automate_user>'
 EOF
   chmod 0640 "$pkg_prefix/default.toml"
 }
