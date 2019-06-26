@@ -1,4 +1,4 @@
-[scaffolding-chef]
+[scaffolding-inspec]
 plan_path = "scaffolding-inspec"
 build_targets = [
   "x86_64-linux"
